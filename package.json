@@ -1,0 +1,26 @@
+{
+  "name": "@southneuhof/sdk",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "peerDependencies": {
+    "@southneuhof/api": "workspace:*"
+  },
+  "scripts": {
+    "build": "pnpm run type-check",
+    "type-check": "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json --noEmit --singleThreaded",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@southneuhof/api": "workspace:*",
+    "@southneuhof/sprindle": "workspace:*",
+    "hono": "^4.12.27"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9"
+  }
+}
