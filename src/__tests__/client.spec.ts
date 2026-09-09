@@ -38,6 +38,10 @@ describe('sdk createRpcClient', () => {
       proofClient.users.list.$post({ query: { page: '1' } })
       // @ts-expect-error create requires its JSON body
       proofClient.users.create.$post({})
+      // @ts-expect-error create input does not accept an unknown field
+      proofClient.users.create.$post({ json: { name: 'Ada', email: 'ada@example.test', password: 'password-123', roleIds: [], wrong: true } })
+      // @ts-expect-error update input does not accept email
+      proofClient.users.update[':id'].$patch({ param: { id: 'user-1' }, json: { email: 'wrong@example.test' } })
       // @ts-expect-error auth sign-out does not support GET
       proofClient.api.auth['sign-out'].$get()
 
@@ -49,10 +53,15 @@ describe('sdk createRpcClient', () => {
     type ListResponse = InferResponseType<RpcClient['users']['list']['$get'], 200>
     type CreateRequest = InferRequestType<RpcClient['users']['create']['$post']>
     type UpdateRequest = InferRequestType<RpcClient['users']['update'][':id']['$patch']>
+    type CreateResponse = InferResponseType<RpcClient['users']['create']['$post'], 201>
 
-    expectTypeOf<ListResponse>().toMatchTypeOf<{ data: unknown[] }>()
-    expectTypeOf<CreateRequest>().toMatchTypeOf<{ json: { name: string; email: string } }>()
-    expectTypeOf<UpdateRequest>().toMatchTypeOf<{ param: { id: string } }>()
+    expectTypeOf<ListResponse['data'][number]>().toEqualTypeOf<{ id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: string; createdAt: string; updatedAt: string }>()
+    expectTypeOf<CreateRequest>().toEqualTypeOf<{ json: { name: string; email: string; password: string; roleIds: string[] } }>()
+    expectTypeOf<UpdateRequest>().toMatchTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: string } }>()
+    expectTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: string } }>().toMatchTypeOf<UpdateRequest>()
+    expectTypeOf<CreateResponse>().toEqualTypeOf<{ data: { id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: string; createdAt: string; updatedAt: string } }>()
+    expectTypeOf<InferResponseType<RpcClient['users']['create']['$post'], 401>>().toEqualTypeOf<{ error: string; message?: string; issues?: Array<{ field?: string; message: string }> }>()
+    expectTypeOf<InferResponseType<RpcClient['users']['create']['$post'], 500>>().toEqualTypeOf<{ error: string; message?: string; issues?: Array<{ field?: string; message: string }> }>()
   })
 
   it('keeps runtime URLs, nested paths, and credentials unchanged', async () => {
