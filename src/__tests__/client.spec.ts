@@ -55,11 +55,11 @@ describe('sdk createRpcClient', () => {
     type UpdateRequest = InferRequestType<RpcClient['users']['update'][':id']['$patch']>
     type CreateResponse = InferResponseType<RpcClient['users']['create']['$post'], 201>
 
-    expectTypeOf<ListResponse['data'][number]>().toEqualTypeOf<{ id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: string; createdAt: string; updatedAt: string }>()
+    expectTypeOf<ListResponse['data'][number]>().toEqualTypeOf<{ id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: 'active' | 'expired' | 'expiring_soon' | 'non_active'; createdAt: string; updatedAt: string }>()
     expectTypeOf<CreateRequest>().toEqualTypeOf<{ json: { name: string; email: string; password: string; roleIds: string[] } }>()
-    expectTypeOf<UpdateRequest>().toMatchTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: string } }>()
-    expectTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: string } }>().toMatchTypeOf<UpdateRequest>()
-    expectTypeOf<CreateResponse>().toEqualTypeOf<{ data: { id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: string; createdAt: string; updatedAt: string } }>()
+    expectTypeOf<UpdateRequest>().toMatchTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: 'active' | 'expired' | 'expiring_soon' | 'non_active' } }>()
+    expectTypeOf<{ param: { id: string }; json: { name?: string; statusCode?: 'active' | 'expired' | 'expiring_soon' | 'non_active' } }>().toMatchTypeOf<UpdateRequest>()
+    expectTypeOf<CreateResponse>().toEqualTypeOf<{ data: { id: string; name: string; email: string; emailVerified: boolean; image: string | null; statusCode: 'active' | 'expired' | 'expiring_soon' | 'non_active'; createdAt: string; updatedAt: string } }>()
     expectTypeOf<InferResponseType<RpcClient['users']['create']['$post'], 401>>().toEqualTypeOf<{ error: string; message?: string; issues?: Array<{ field?: string; message: string }> }>()
     expectTypeOf<InferResponseType<RpcClient['users']['create']['$post'], 500>>().toEqualTypeOf<{ error: string; message?: string; issues?: Array<{ field?: string; message: string }> }>()
   })
