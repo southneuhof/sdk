@@ -12,6 +12,8 @@ describe('sdk createRpcClient', () => {
     expect(client.roles.detail[':id'].$get).toBeTypeOf('function')
     expect(client.api.auth['sign-out'].$post).toBeTypeOf('function')
     expect(client.files.object.$delete).toBeTypeOf('function')
+    expect(client.files['presigned-url'].$post).toBeTypeOf('function')
+    expect(client.api.auth['sign-in'].email.$post).toBeTypeOf('function')
   })
 
   it('keeps the public request and response types honest', () => {
@@ -44,6 +46,8 @@ describe('sdk createRpcClient', () => {
       proofClient.users.update[':id'].$patch({ param: { id: 'user-1' }, json: { email: 'wrong@example.test' } })
       // @ts-expect-error auth sign-out does not support GET
       proofClient.api.auth['sign-out'].$get()
+      // @ts-expect-error camelCase must not exist: the path segment keeps its hyphen
+      proofClient.files.presignedUrl.$post()
 
       return proofClient
     }
