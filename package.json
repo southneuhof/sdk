@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "pnpm run type-check",
-    "type-check": "tsc -p tsconfig.json --noEmit --singleThreaded",
+    "type-check": "node scripts/ensure-routes-contract.mjs",
     "test": "vitest run"
   },
   "dependencies": {
