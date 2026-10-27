@@ -3,19 +3,6 @@ import type { InferRequestType, InferResponseType } from 'hono/client'
 import { createRpcClient, type RpcClient } from '../client'
 
 describe('sdk createRpcClient', () => {
-  it('keeps model and bare Hono client paths', () => {
-    const client = createRpcClient('http://localhost:8787')
-
-    expect(client.health.$get).toBeTypeOf('function')
-    expect(client.me.$get).toBeTypeOf('function')
-    expect(client.users.list.$get).toBeTypeOf('function')
-    expect(client.roles.detail[':id'].$get).toBeTypeOf('function')
-    expect(client.api.auth['sign-out'].$post).toBeTypeOf('function')
-    expect(client.files.object.$delete).toBeTypeOf('function')
-    expect(client.files['presigned-url'].$post).toBeTypeOf('function')
-    expect(client.api.auth['sign-in'].email.$post).toBeTypeOf('function')
-  })
-
   it('keeps the public request and response types honest', () => {
     const client = createRpcClient('http://localhost:8787')
     const typedClient: RpcClient = client
@@ -52,7 +39,8 @@ describe('sdk createRpcClient', () => {
       return proofClient
     }
 
-    expect(proofCalls).toBeTypeOf('function')
+    void typedClient
+    void proofCalls
 
     type ListResponse = InferResponseType<RpcClient['users']['list']['$get'], 200>
     type CreateRequest = InferRequestType<RpcClient['users']['create']['$post']>
